@@ -14,6 +14,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppResearchRouteImport } from './routes/app.research'
+import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppOpportunitiesRouteImport } from './routes/app.opportunities'
 import { Route as AppMentorRouteImport } from './routes/app.mentor'
 import { Route as AppIdentityRouteImport } from './routes/app.identity'
@@ -46,6 +47,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const AppResearchRoute = AppResearchRouteImport.update({
   id: '/research',
   path: '/research',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => AppRoute,
 } as any)
 const AppOpportunitiesRoute = AppOpportunitiesRouteImport.update({
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/app/identity': typeof AppIdentityRoute
   '/app/mentor': typeof AppMentorRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/research': typeof AppResearchRoute
   '/app/': typeof AppIndexRoute
 }
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/app/identity': typeof AppIdentityRoute
   '/app/mentor': typeof AppMentorRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/research': typeof AppResearchRoute
   '/app': typeof AppIndexRoute
 }
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/app/identity': typeof AppIdentityRoute
   '/app/mentor': typeof AppMentorRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/research': typeof AppResearchRoute
   '/app/': typeof AppIndexRoute
 }
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/app/identity'
     | '/app/mentor'
     | '/app/opportunities'
+    | '/app/profile'
     | '/app/research'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/app/identity'
     | '/app/mentor'
     | '/app/opportunities'
+    | '/app/profile'
     | '/app/research'
     | '/app'
   id:
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/app/identity'
     | '/app/mentor'
     | '/app/opportunities'
+    | '/app/profile'
     | '/app/research'
     | '/app/'
   fileRoutesById: FileRoutesById
@@ -222,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/research'
       fullPath: '/app/research'
       preLoaderRoute: typeof AppResearchRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/profile': {
+      id: '/app/profile'
+      path: '/profile'
+      fullPath: '/app/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/opportunities': {
@@ -292,6 +311,7 @@ interface AppRouteChildren {
   AppIdentityRoute: typeof AppIdentityRoute
   AppMentorRoute: typeof AppMentorRoute
   AppOpportunitiesRoute: typeof AppOpportunitiesRoute
+  AppProfileRoute: typeof AppProfileRoute
   AppResearchRoute: typeof AppResearchRoute
   AppIndexRoute: typeof AppIndexRoute
 }
@@ -305,6 +325,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppIdentityRoute: AppIdentityRoute,
   AppMentorRoute: AppMentorRoute,
   AppOpportunitiesRoute: AppOpportunitiesRoute,
+  AppProfileRoute: AppProfileRoute,
   AppResearchRoute: AppResearchRoute,
   AppIndexRoute: AppIndexRoute,
 }
