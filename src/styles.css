@@ -149,5 +149,36 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: 'IBM Plex Sans Thai', 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Bricolage Grotesque', 'IBM Plex Sans Thai', sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .bg-ink { background-color: var(--ink); }
+  .bg-ink-soft { background-color: var(--ink-soft); }
+  .bg-yellow { background-color: var(--yellow); }
+  .bg-yellow-deep { background-color: var(--yellow-deep); }
+  .bg-cream { background-color: var(--cream); }
+  .text-ink { color: var(--ink); }
+  .text-yellow { color: var(--yellow); }
+  .text-cream { color: var(--cream); }
+  .border-ink { border-color: var(--ink); }
+  .shadow-brutal { box-shadow: var(--shadow-brutal); }
+  .shadow-brutal-sm { box-shadow: var(--shadow-brutal-sm); }
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, oklch(0.16 0.02 250 / 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(0.16 0.02 250 / 0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .bg-dots-dark {
+    background-image: radial-gradient(oklch(0.97 0.01 95 / 0.08) 1px, transparent 1px);
+    background-size: 16px 16px;
   }
 }
