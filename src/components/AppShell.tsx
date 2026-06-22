@@ -2,6 +2,8 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { Mascot } from "./Mascot";
 import { user } from "@/lib/mock";
+import { LogoMark } from "./Logo";
+import { AddGoalDialog, SearchDialog } from "./dialogs";
 
 const nav = [
   { to: "/app", label: "โฮม", icon: "◉" },
@@ -23,9 +25,11 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
       <div className="flex">
         {/* Sidebar */}
         <aside className="sticky top-0 hidden h-screen w-72 shrink-0 flex-col border-r-2 border-ink bg-sidebar text-sidebar-foreground md:flex">
-          <Link to="/" className="flex items-center gap-3 border-b-2 border-sidebar-border px-6 py-5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-yellow text-ink font-display text-lg font-bold">L</div>
-            <span className="font-display text-xl font-bold tracking-tight">LifeOS</span>
+          <Link to="/" className="flex items-center gap-2.5 border-b-2 border-sidebar-border px-6 py-5">
+            <LogoMark size={36} />
+            <span className="font-display text-xl font-bold tracking-tight">
+              Life<span className="text-yellow">OS</span>
+            </span>
           </Link>
 
           <div className="border-b-2 border-sidebar-border px-6 py-5">
@@ -75,12 +79,20 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
               {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
             </div>
             <div className="flex items-center gap-2">
-              <button className="rounded-md border-2 border-ink bg-card px-3 py-2 text-sm font-medium shadow-brutal-sm transition-transform hover:-translate-y-0.5">
-                ค้นหา ⌘K
-              </button>
-              <button className="rounded-md border-2 border-ink bg-yellow px-3 py-2 text-sm font-semibold shadow-brutal-sm transition-transform hover:-translate-y-0.5">
-                + เพิ่มเป้าหมาย
-              </button>
+              <SearchDialog
+                trigger={
+                  <button className="rounded-md border-2 border-ink bg-card px-3 py-2 text-sm font-medium shadow-brutal-sm transition-transform hover:-translate-y-0.5">
+                    ค้นหา ⌘K
+                  </button>
+                }
+              />
+              <AddGoalDialog
+                trigger={
+                  <button className="rounded-md border-2 border-ink bg-yellow px-3 py-2 text-sm font-semibold shadow-brutal-sm transition-transform hover:-translate-y-0.5">
+                    + เพิ่มเป้าหมาย
+                  </button>
+                }
+              />
             </div>
           </header>
           <div className="px-6 py-8 md:px-10 md:py-10">{children}</div>
