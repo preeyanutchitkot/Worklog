@@ -1,38 +1,16 @@
 import { Link } from "@tanstack/react-router";
+import logoAsset from "@/assets/lifeos-logo.png.asset.json";
 
 export function LogoMark({ size = 36, className = "" }: { size?: number; className?: string }) {
   return (
-    <svg
-      viewBox="0 0 64 64"
+    <img
+      src={logoAsset.url}
       width={size}
       height={size}
-      className={className}
-      aria-label="LifeOS"
-      role="img"
-    >
-      {/* hexagon shield */}
-      <path
-        d="M32 3 L57 17 V47 L32 61 L7 47 V17 Z"
-        fill="#1A1A1A"
-        stroke="#1A1A1A"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      {/* yellow inner L */}
-      <path
-        d="M19 16 H30 V42 H45 V52 H19 Z"
-        fill="#FFC81F"
-      />
-      {/* upward arrow */}
-      <path
-        d="M28 44 L46 26 M38 26 H46 V34"
-        fill="none"
-        stroke="#FFC81F"
-        strokeWidth="5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+      alt="LifeOS"
+      className={`object-contain ${className}`}
+      style={{ width: size, height: size }}
+    />
   );
 }
 

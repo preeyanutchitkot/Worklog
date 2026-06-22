@@ -16,6 +16,7 @@ const nav = [
   { to: "/app/experience", label: "Experience", icon: "✸" },
   { to: "/app/research", label: "Research", icon: "?" },
   { to: "/app/identity", label: "Identity Hub", icon: "☺" },
+  { to: "/app/profile", label: "โปรไฟล์", icon: "♛" },
 ];
 
 export function AppShell({ children, title, subtitle }: { children: ReactNode; title: string; subtitle?: string }) {
