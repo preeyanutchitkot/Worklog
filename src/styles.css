@@ -164,6 +164,7 @@
   .bg-ink-soft { background-color: var(--ink-soft); }
   .bg-yellow { background-color: var(--yellow); }
   .bg-yellow-deep { background-color: var(--yellow-deep); }
+  .text-yellow-deep { color: var(--yellow-deep); }
   .bg-cream { background-color: var(--cream); }
   .text-ink { color: var(--ink); }
   .text-yellow { color: var(--yellow); }
