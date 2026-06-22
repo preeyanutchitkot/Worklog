@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Mascot } from "@/components/Mascot";
+import { LogoMark } from "@/components/Logo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -18,10 +19,10 @@ function Landing() {
     <div className="min-h-screen bg-cream text-ink">
       {/* Nav */}
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md border-2 border-ink bg-yellow font-display text-lg font-bold">L</div>
-          <span className="font-display text-xl font-bold">LifeOS</span>
-        </div>
+        <Link to="/" className="flex items-center gap-2.5">
+          <LogoMark size={36} />
+          <span className="font-display text-xl font-bold">Life<span className="text-yellow-deep">OS</span></span>
+        </Link>
         <div className="hidden items-center gap-7 text-sm font-medium md:flex">
           <a href="#how" className="hover:text-yellow-deep">วิธีใช้งาน</a>
           <a href="#modules" className="hover:text-yellow-deep">โมดูล</a>
@@ -219,7 +220,7 @@ function Landing() {
       <footer className="mx-auto max-w-7xl px-6 py-10">
         <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded border-2 border-ink bg-yellow font-display font-bold">L</div>
+            <LogoMark size={28} />
             <span className="font-medium text-ink">LifeOS</span>
             <span>© 2026</span>
           </div>
