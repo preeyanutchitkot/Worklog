@@ -88,7 +88,21 @@ function Profile() {
   async function handleSaveToSheets() {
     setIsSaving(true);
     toast("กำลังบันทึกลง Google Sheets...");
-    const success = await saveToGoogleSheets({ type: "profile", data: { bio, links, identity: identityList, experiences: expList } });
+    const success = await saveToGoogleSheets({ 
+      type: "profile", 
+      data: { 
+        name: user.name,
+        role: user.role,
+        goal: user.goal,
+        goalProgress: user.goalProgress,
+        mascotName: user.mascotName,
+        streak: user.streak,
+        bio, 
+        links, 
+        identity: identityList, 
+        experiences: expList 
+      } 
+    });
     if (success) {
       toast.success("บันทึกลง Google Sheets สำเร็จ!");
     } else {
@@ -274,7 +288,19 @@ function Profile() {
 {`function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   var payload = JSON.parse(e.postData.contents);
-  sheet.appendRow([new Date(), payload.type, JSON.stringify(payload.data)]);
+  
+  if (payload.type === "profile") {
+    var d = payload.data;
+    // คอลัมน์: เวลาที่บันทึก, ชื่อ, ตำแหน่ง, เป้าหมาย, ความคืบหน้า, ชื่อ Mascot, Streak
+    sheet.appendRow([new Date(), d.name, d.role, d.goal, d.goalProgress, d.mascotName, d.streak]);
+  } else if (payload.type === "worklog") {
+    var d = payload.data;
+    // คอลัมน์: เวลาที่บันทึก, วันที่, โปรเจกต์, งานที่ทำ, ระยะเวลา (เวลาเริ่ม-จบ), จำนวนชั่วโมง, โน้ต
+    sheet.appendRow([new Date(), d.date, d.project, d.task, d.duration, d.totalHours, d.note]);
+  } else {
+    sheet.appendRow([new Date(), payload.type, JSON.stringify(payload.data)]);
+  }
+  
   return ContentService.createTextOutput(JSON.stringify({status: "success"}))
     .setMimeType(ContentService.MimeType.JSON);
 }`}

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AppShell, Card, Pill } from "@/components/AppShell";
 import { insights, todayTasks, user as seedUser, workLogs } from "@/lib/mock";
-import { getSheetUrl, setSheetUrl, useUser, updateUser } from "@/lib/api";
+import { getSheetUrl, setSheetUrl, useUser, updateUser, saveToGoogleSheets } from "@/lib/api";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({ meta: [{ title: "แดชบอร์ด · WorkLog" }] }),
@@ -101,27 +101,32 @@ function Home() {
       setLogs((cur) =>
         cur.map((log) =>
           log.id === editingLogId
-            ? { ...log, project: form.project, task: form.task.trim(), duration: `${form.startTime} - ${form.endTime}`, note: form.note.trim(), date: thaiDate, rawDate: form.date }
+            ? { ...log, project: form.project, task: form.task.trim(), duration: `${form.startTime} - ${form.endTime}`, totalHours: calculateHours(form.startTime, form.endTime), note: form.note.trim(), date: thaiDate, rawDate: form.date }
             : log,
         ),
       );
       setEditingLogId(null);
       toast.success("แก้ไข work log แล้ว");
     } else {
+      const newLog = {
+        id: Date.now(),
+        date: thaiDate,
+        rawDate: form.date,
+        project: form.project,
+        task: form.task.trim(),
+        duration: `${form.startTime} - ${form.endTime}`,
+        totalHours: calculateHours(form.startTime, form.endTime),
+        status: "เสร็จแล้ว",
+        mood: "บันทึกใหม่",
+        note: form.note.trim() || "ยังไม่ได้เพิ่มรายละเอียด",
+      };
       setLogs((cur) => [
-        {
-          id: Date.now(),
-          date: thaiDate,
-          rawDate: form.date,
-          project: form.project,
-          task: form.task.trim(),
-          duration: `${form.startTime} - ${form.endTime}`,
-          status: "เสร็จแล้ว",
-          mood: "บันทึกใหม่",
-          note: form.note.trim() || "ยังไม่ได้เพิ่มรายละเอียด",
-        },
+        newLog,
         ...cur,
       ]);
+      if (sheetUrlInput) {
+        saveToGoogleSheets({ type: "worklog", data: newLog }).catch(() => {});
+      }
       toast.success("เพิ่ม work log แล้ว");
     }
 
@@ -139,6 +144,20 @@ function Home() {
       endTime: timeParts[1] || "10:00",
       note: log.note,
     });
+  }
+
+  function calculateHours(start: string, end: string) {
+    if (!start || !end) return "0.00";
+    const [sH, sM] = start.split(":").map(Number);
+    const [eH, eM] = end.split(":").map(Number);
+    let hours = eH - sH;
+    let mins = eM - sM;
+    if (mins < 0) {
+      hours -= 1;
+      mins += 60;
+    }
+    if (hours < 0) hours += 24;
+    return (hours + mins / 60).toFixed(2);
   }
 
   function deleteLog(id: number) {
