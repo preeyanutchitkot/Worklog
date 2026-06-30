@@ -53,3 +53,26 @@ export function useUser() {
 
   return user;
 }
+
+export async function saveToGoogleSheets(data: any) {
+  const url = getSheetUrl();
+  if (!url) {
+    console.error("No Google Sheets URL configured");
+    return false;
+  }
+  
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8",
+      },
+      body: JSON.stringify(data),
+    });
+    const result = await response.json();
+    return result.status === "success" || result.status === 200;
+  } catch (error) {
+    console.error("Failed to save to Google Sheets:", error);
+    return false;
+  }
+}

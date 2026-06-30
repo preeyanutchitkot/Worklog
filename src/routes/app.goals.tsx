@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { AppShell, Card, Pill } from "@/components/AppShell";
 import { AddGoalDialog, SubgoalsDialog } from "@/components/dialogs";
 import { goals as seedGoals } from "@/lib/mock";
+import { saveToGoogleSheets } from "@/lib/api";
 
 export const Route = createFileRoute("/app/goals")({
   head: () => ({ meta: [{ title: "งานและเป้าหมาย · WorkLog" }] }),
@@ -17,7 +18,8 @@ function Goals() {
     const saved = window.localStorage.getItem(goalsStorageKey);
     return saved ? JSON.parse(saved) : seedGoals.map((goal) => ({ ...goal, paused: false }));
   });
-  const active = list.filter((goal) => !goal.paused);
+  const [isSaving, setIsSaving] = useState(false);
+  const active = list.filter((goal: any) => !goal.paused);
 
   function addGoal(goal: { title: string; horizon: string; why: string }) {
     setList((cur) => [
@@ -50,10 +52,31 @@ function Goals() {
     ];
   }
 
+  async function handleSaveToSheets() {
+    setIsSaving(true);
+    toast("กำลังบันทึกลง Google Sheets...");
+    const success = await saveToGoogleSheets({ type: "goals", data: list });
+    if (success) {
+      toast.success("บันทึกลง Google Sheets สำเร็จ!");
+    } else {
+      toast.error("บันทึกไม่สำเร็จ ตรวจสอบ Webhook URL");
+    }
+    setIsSaving(false);
+  }
+
   return (
     <AppShell title="งานและเป้าหมาย" subtitle="รวม backlog งานที่ต้องทำ ความคืบหน้า และ task ย่อยที่ใช้จด work log">
       <div className="grid gap-5">
-        {list.map((goal, index) => (
+        <div className="flex justify-end">
+          <button
+            onClick={handleSaveToSheets}
+            disabled={isSaving}
+            className="rounded-md border-2 border-ink bg-ink px-4 py-2 text-sm font-semibold text-cream shadow-brutal-sm disabled:opacity-50"
+          >
+            {isSaving ? "กำลังบันทึก..." : "บันทึกลง Google Sheets"}
+          </button>
+        </div>
+        {list.map((goal: any, index: number) => (
           <Card key={goal.id} tone={index === 0 && !goal.paused ? "yellow" : "light"} className={goal.paused ? "opacity-60" : ""}>
             <div className="p-6">
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -97,7 +120,6 @@ function Goals() {
               <p className="text-sm text-muted-foreground">เพิ่มงานใหม่ได้ทันที แล้วค่อยแตกเป็น task ย่อยก่อนลงตาราง</p>
             </div>
             <AddGoalDialog
-              onCreate={addGoal}
               trigger={
                 <button className="rounded-md border-2 border-ink bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-brutal-sm">
                   + เพิ่มงานใหม่

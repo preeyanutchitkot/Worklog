@@ -33,6 +33,7 @@ function Home() {
   const [form, setForm] = useState({
     task: "",
     project: "WorkLog MVP",
+    date: new Date().toISOString().split('T')[0],
     startTime: "09:00",
     endTime: "10:00",
     note: "",
@@ -85,11 +86,14 @@ function Home() {
       return;
     }
 
+    const logDateObj = new Date(form.date);
+    const thaiDate = new Intl.DateTimeFormat('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }).format(logDateObj);
+
     if (editingLogId) {
       setLogs((cur) =>
         cur.map((log) =>
           log.id === editingLogId
-            ? { ...log, project: form.project, task: form.task.trim(), duration: `${form.startTime} - ${form.endTime}`, note: form.note.trim() }
+            ? { ...log, project: form.project, task: form.task.trim(), duration: `${form.startTime} - ${form.endTime}`, note: form.note.trim(), date: thaiDate, rawDate: form.date }
             : log,
         ),
       );
@@ -99,7 +103,8 @@ function Home() {
       setLogs((cur) => [
         {
           id: Date.now(),
-          date: "30 มิ.ย. 2026",
+          date: thaiDate,
+          rawDate: form.date,
           project: form.project,
           task: form.task.trim(),
           duration: `${form.startTime} - ${form.endTime}`,
@@ -121,6 +126,7 @@ function Home() {
     setForm({
       task: log.task,
       project: log.project,
+      date: log.rawDate || new Date().toISOString().split('T')[0],
       startTime: timeParts[0] || "09:00",
       endTime: timeParts[1] || "10:00",
       note: log.note,
@@ -252,7 +258,14 @@ function Home() {
                 placeholder="วันนี้ทำอะไรไป?"
                 className="w-full rounded-md border-2 border-ink bg-cream px-3 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-yellow"
               />
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="date"
+                  value={form.date}
+                  onChange={(e) => setForm((cur) => ({ ...cur, date: e.target.value }))}
+                  className="rounded-md border-2 border-ink bg-cream px-3 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-yellow"
+                  title="วันที่บันทึก"
+                />
                 <input
                   value={form.project}
                   onChange={(e) => setForm((cur) => ({ ...cur, project: e.target.value }))}

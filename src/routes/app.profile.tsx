@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { AppShell, Card, Pill } from "@/components/AppShell";
 import { Mascot } from "@/components/Mascot";
 import { identity, experiences, growthStats, goals } from "@/lib/mock";
-import { useUser } from "@/lib/api";
+import { saveToGoogleSheets, useUser } from "@/lib/api";
 
 export const Route = createFileRoute("/app/profile")({
   head: () => ({ meta: [{ title: "โปรไฟล์ · LifeOS" }] }),
@@ -14,15 +14,45 @@ export const Route = createFileRoute("/app/profile")({
 function Profile() {
   const user = useUser();
   const [editing, setEditing] = useState(false);
-  const [bio, setBio] = useState(
-    "นักศึกษาปี 4 สาย CS · กำลังสร้างเส้นทางสู่ Data Engineer · ชอบสร้างของจริงมากกว่าตำแหน่งโต",
-  );
+  const [isSaving, setIsSaving] = useState(false);
+  
+  const [bio, setBio] = useState(() => {
+    const saved = window.localStorage.getItem("worklog-profile-bio");
+    return saved || "นักศึกษาปี 4 สาย CS · กำลังสร้างเส้นทางสู่ Data Engineer · ชอบสร้างของจริงมากกว่าตำแหน่งโต";
+  });
   const [draft, setDraft] = useState(bio);
-  const [links, setLinks] = useState([
-    { label: "GitHub", value: "github.com/phumtnp" },
-    { label: "LinkedIn", value: "linkedin.com/in/phumtnp" },
-    { label: "Email", value: "phum@lifeos.app" },
-  ]);
+  
+  const [links, setLinks] = useState(() => {
+    const saved = window.localStorage.getItem("worklog-profile-links");
+    if (saved) return JSON.parse(saved);
+    return [
+      { label: "GitHub", value: "github.com/phumtnp" },
+      { label: "LinkedIn", value: "linkedin.com/in/phumtnp" },
+      { label: "Email", value: "phum@lifeos.app" },
+    ];
+  });
+
+  const [identityList, setIdentityList] = useState(() => {
+    const saved = window.localStorage.getItem("worklog-identity");
+    if (saved) return JSON.parse(saved);
+    return identity && identity.length > 0 ? identity : [
+      { key: "core_skill", label: "ทักษะหลัก", value: "Full Stack Development", detail: "เชี่ยวชาญ React และ Node.js", source: "Work logs ล่าสุด" },
+      { key: "interest", label: "ความสนใจ", value: "System Design", detail: "ชอบอ่านบทความเกี่ยวกับ Architecture", source: "พฤติกรรมการอ่าน" },
+    ];
+  });
+
+  const [expList, setExpList] = useState(() => {
+    const saved = window.localStorage.getItem("worklog-experiences");
+    if (saved) return JSON.parse(saved);
+    return experiences && experiences.length > 0 ? experiences : [
+      { id: 1, type: "Project", title: "สร้าง LifeOS MVP ด้วย React", period: "มิ.ย. 2026 - ปัจจุบัน", verified: false },
+    ];
+  });
+
+  useEffect(() => {
+    window.localStorage.setItem("worklog-profile-bio", bio);
+    window.localStorage.setItem("worklog-profile-links", JSON.stringify(links));
+  }, [bio, links]);
 
   function save() {
     setBio(draft);
@@ -33,6 +63,18 @@ function Profile() {
   function share() {
     navigator.clipboard?.writeText("https://lifeos.app/u/phumtnp").catch(() => {});
     toast.success("คัดลอกลิงก์โปรไฟล์แล้ว", { description: "lifeos.app/u/phumtnp" });
+  }
+
+  async function handleSaveToSheets() {
+    setIsSaving(true);
+    toast("กำลังบันทึกลง Google Sheets...");
+    const success = await saveToGoogleSheets({ type: "profile", data: { bio, links, identity: identityList, experiences: expList } });
+    if (success) {
+      toast.success("บันทึกลง Google Sheets สำเร็จ!");
+    } else {
+      toast.error("บันทึกไม่สำเร็จ ตรวจสอบ Webhook URL");
+    }
+    setIsSaving(false);
   }
 
   return (
@@ -132,6 +174,15 @@ function Profile() {
                   PDF
                 </button>
               </div>
+              <div className="mt-2">
+                <button
+                  onClick={handleSaveToSheets}
+                  disabled={isSaving}
+                  className="w-full rounded-md border-2 border-ink bg-yellow px-3 py-2 text-sm font-semibold shadow-brutal-sm disabled:opacity-50"
+                >
+                  {isSaving ? "กำลังบันทึก..." : "บันทึกลง Google Sheets"}
+                </button>
+              </div>
             </div>
           </Card>
 
@@ -168,7 +219,7 @@ function Profile() {
                 <span className="text-xs font-mono text-muted-foreground">8 มิติ</span>
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                {identity.slice(0, 6).map((it) => (
+                {identityList.slice(0, 6).map((it: any) => (
                   <div key={it.key} className="rounded-lg border-2 border-ink/15 p-3">
                     <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">{it.label}</div>
                     <div className="mt-0.5 text-sm font-semibold">{it.value}</div>
@@ -203,7 +254,7 @@ function Profile() {
               <div className="p-6">
                 <h3 className="font-display text-xl font-bold">ผลงานที่ยืนยันแล้ว</h3>
                 <ul className="mt-3 space-y-3">
-                  {experiences.map((e) => (
+                  {expList.map((e: any) => (
                     <li key={e.id} className="flex items-start gap-3">
                       <Pill tone={e.verified ? "yellow" : "light"}>{e.type}</Pill>
                       <div className="min-w-0 flex-1">
