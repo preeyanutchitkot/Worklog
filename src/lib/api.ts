@@ -4,6 +4,7 @@ import { user as mockUser } from "@/lib/mock";
 const SHEET_URL_KEY = "worklog-sheet-url";
 
 export function getSheetUrl(): string {
+  if (typeof window === "undefined") return "";
   return window.localStorage.getItem(SHEET_URL_KEY) || "";
 }
 
