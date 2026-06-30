@@ -1,8 +1,22 @@
-export const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbzBlxxdp0LY6Fg1cC9DRv--ZMP7XtWvhy0x0cOHPYkVulCVo8bK6smqWR1T_LRCCwjcBQ/exec";
+import { useState, useEffect } from "react";
+import { user as mockUser } from "@/lib/mock";
+
+const SHEET_URL_KEY = "worklog-sheet-url";
+
+export function getSheetUrl(): string {
+  return window.localStorage.getItem(SHEET_URL_KEY) || "";
+}
+
+export function setSheetUrl(url: string) {
+  window.localStorage.setItem(SHEET_URL_KEY, url);
+}
 
 export async function fetchSheetData(sheetName: string) {
+  const url = getSheetUrl();
+  if (!url) return [];
+  
   try {
-    const response = await fetch(`${GOOGLE_SHEETS_API_URL}?sheet=${encodeURIComponent(sheetName)}`);
+    const response = await fetch(`${url}?sheet=${encodeURIComponent(sheetName)}`);
     const data = await response.json();
     
     if (data.status === "error") {
@@ -23,4 +37,18 @@ export async function fetchUser() {
     return data[0]; // แถวแรกที่มีข้อมูลคือ user profile
   }
   return null;
+}
+
+export function useUser() {
+  const [user, setUser] = useState(mockUser);
+
+  useEffect(() => {
+    fetchUser().then((data) => {
+      if (data) {
+        setUser({ ...mockUser, ...data });
+      }
+    });
+  }, []);
+
+  return user;
 }

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AppShell, Card, Pill } from "@/components/AppShell";
 import { insights, todayTasks, user as seedUser, workLogs } from "@/lib/mock";
+import { getSheetUrl, setSheetUrl } from "@/lib/api";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({ meta: [{ title: "แดชบอร์ด · WorkLog" }] }),
@@ -22,9 +23,11 @@ function Home() {
   const [form, setForm] = useState({
     task: "",
     project: "WorkLog MVP",
-    duration: "1 ชม.",
+    startTime: "09:00",
+    endTime: "10:00",
     note: "",
   });
+  const [sheetUrlInput, setSheetUrlInput] = useState(getSheetUrl());
 
   useEffect(() => {
     const savedProfile = window.localStorage.getItem(profileStorageKey);
@@ -66,7 +69,7 @@ function Home() {
       setLogs((cur) =>
         cur.map((log) =>
           log.id === editingLogId
-            ? { ...log, project: form.project, task: form.task.trim(), duration: form.duration, note: form.note.trim() }
+            ? { ...log, project: form.project, task: form.task.trim(), duration: `${form.startTime} - ${form.endTime}`, note: form.note.trim() }
             : log,
         ),
       );
@@ -79,7 +82,7 @@ function Home() {
           date: "30 มิ.ย. 2026",
           project: form.project,
           task: form.task.trim(),
-          duration: form.duration,
+          duration: `${form.startTime} - ${form.endTime}`,
           status: "เสร็จแล้ว",
           mood: "บันทึกใหม่",
           note: form.note.trim() || "ยังไม่ได้เพิ่มรายละเอียด",
@@ -94,10 +97,12 @@ function Home() {
 
   function editLog(log: WorkLog) {
     setEditingLogId(log.id);
+    const timeParts = log.duration ? log.duration.split(" - ") : [];
     setForm({
       task: log.task,
       project: log.project,
-      duration: log.duration,
+      startTime: timeParts[0] || "09:00",
+      endTime: timeParts[1] || "10:00",
       note: log.note,
     });
   }
@@ -155,6 +160,27 @@ function Home() {
                 aria-label="เป้าหมาย"
               />
             </div>
+            <div className="mt-5 pt-4 border-t-2 border-ink/10">
+              <h4 className="text-sm font-bold mb-2">เชื่อมต่อ Google Sheets</h4>
+              <div className="flex gap-2">
+                <input
+                  value={sheetUrlInput}
+                  onChange={(e) => setSheetUrlInput(e.target.value)}
+                  placeholder="วางลิงก์ Google Apps Script ที่นี่"
+                  className="flex-1 rounded-md border-2 border-ink bg-cream px-3 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-yellow"
+                />
+                <button
+                  onClick={() => {
+                    setSheetUrl(sheetUrlInput);
+                    toast.success("บันทึกการเชื่อมต่อแล้ว (กำลังรีโหลด...)");
+                    setTimeout(() => window.location.reload(), 1000);
+                  }}
+                  className="rounded-md border-2 border-ink bg-ink px-3 py-2 text-sm font-semibold text-cream shadow-brutal-sm"
+                >
+                  บันทึก
+                </button>
+              </div>
+            </div>
             <p className="mt-3 text-xs text-muted-foreground">ข้อมูลนี้จะจำไว้ใน browser เครื่องนี้</p>
           </div>
         </Card>
@@ -206,16 +232,26 @@ function Home() {
                 placeholder="วันนี้ทำอะไรไป?"
                 className="w-full rounded-md border-2 border-ink bg-cream px-3 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-yellow"
               />
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <input
                   value={form.project}
                   onChange={(e) => setForm((cur) => ({ ...cur, project: e.target.value }))}
                   className="rounded-md border-2 border-ink bg-cream px-3 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-yellow"
+                  placeholder="ชื่อโปรเจกต์"
                 />
                 <input
-                  value={form.duration}
-                  onChange={(e) => setForm((cur) => ({ ...cur, duration: e.target.value }))}
+                  type="time"
+                  value={form.startTime}
+                  onChange={(e) => setForm((cur) => ({ ...cur, startTime: e.target.value }))}
                   className="rounded-md border-2 border-ink bg-cream px-3 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-yellow"
+                  title="เวลาเริ่มต้น"
+                />
+                <input
+                  type="time"
+                  value={form.endTime}
+                  onChange={(e) => setForm((cur) => ({ ...cur, endTime: e.target.value }))}
+                  className="rounded-md border-2 border-ink bg-cream px-3 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-yellow"
+                  title="เวลาสิ้นสุด"
                 />
               </div>
               <textarea
@@ -272,8 +308,14 @@ function Home() {
         <Card tone="ink" className="lg:col-span-3">
           <div className="p-6">
             <div className="text-xs font-mono uppercase tracking-widest text-yellow">Insight</div>
-            <p className="mt-3 font-display text-lg font-semibold leading-snug">{insights[0].text}</p>
-            <div className="mt-4 text-xs text-cream/60">{insights[0].time}</div>
+            {insights.length > 0 ? (
+              <>
+                <p className="mt-3 font-display text-lg font-semibold leading-snug">{insights[0].text}</p>
+                <div className="mt-4 text-xs text-cream/60">{insights[0].time}</div>
+              </>
+            ) : (
+              <p className="mt-3 font-display text-lg font-semibold leading-snug text-cream/60">ยังไม่มีข้อมูล Insight (เพิ่มข้อมูลเพื่อรับการวิเคราะห์)</p>
+            )}
           </div>
         </Card>
       </div>

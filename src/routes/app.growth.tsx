@@ -55,9 +55,11 @@ function Growth() {
                 ))}
               </div>
             </div>
-            <p className="mt-5 rounded-lg border-2 border-ink bg-yellow px-4 py-3 text-sm font-medium">
-              {insights[1].text}
-            </p>
+            {insights.length > 1 ? (
+              <p className="mt-5 rounded-lg border-2 border-ink bg-yellow px-4 py-3 text-sm font-medium">
+                {insights[1].text}
+              </p>
+            ) : null}
           </div>
         </Card>
 

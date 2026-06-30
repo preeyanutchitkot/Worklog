@@ -2,7 +2,9 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { ClipboardList, LayoutDashboard, Search, Target, CalendarDays, BarChart3 } from "lucide-react";
 import { Mascot } from "./Mascot";
-import { user } from "@/lib/mock";
+import { user as mockUser } from "@/lib/mock";
+import { fetchUser, useUser } from "@/lib/api";
+import { useState, useEffect } from "react";
 import { LogoMark } from "./Logo";
 import { AddGoalDialog, SearchDialog } from "./dialogs";
 
@@ -15,6 +17,8 @@ const nav = [
 
 export function AppShell({ children, title, subtitle }: { children: ReactNode; title: string; subtitle?: string }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const user = useUser();
+
   return (
     <div className="min-h-screen bg-cream text-ink">
       <div className="flex">
@@ -46,11 +50,10 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`mb-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                    active
+                  className={`mb-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${active
                       ? "bg-yellow text-ink"
                       : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                  }`}
+                    }`}
                 >
                   <Icon className="h-4 w-4" />
                   {item.label}

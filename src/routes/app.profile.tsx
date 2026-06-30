@@ -3,7 +3,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { AppShell, Card, Pill } from "@/components/AppShell";
 import { Mascot } from "@/components/Mascot";
-import { user, identity, experiences, growthStats, goals } from "@/lib/mock";
+import { identity, experiences, growthStats, goals } from "@/lib/mock";
+import { useUser } from "@/lib/api";
 
 export const Route = createFileRoute("/app/profile")({
   head: () => ({ meta: [{ title: "โปรไฟล์ · LifeOS" }] }),
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/app/profile")({
 });
 
 function Profile() {
+  const user = useUser();
   const [editing, setEditing] = useState(false);
   const [bio, setBio] = useState(
     "นักศึกษาปี 4 สาย CS · กำลังสร้างเส้นทางสู่ Data Engineer · ชอบสร้างของจริงมากกว่าตำแหน่งโต",

@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import logoAsset from "@/assets/lifeos-logo.png.asset.json";
+import catLogo from "@/assets/cat.png";
 
 export function LogoMark({ size = 36, className = "" }: { size?: number; className?: string }) {
   return (
     <img
-      src={logoAsset.url}
+      src={catLogo}
       width={size}
       height={size}
       alt="LifeOS"
