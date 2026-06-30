@@ -1,107 +1,131 @@
 export const user = {
-  name: "ภูมิ ธนพล",
-  role: "นักศึกษา · กำลังหางาน",
-  goal: "เป็น Data Engineer ภายใน 8 เดือน",
-  goalProgress: 42,
-  mascotName: "พิกซี่",
-  streak: 18,
+  name: "พลอย",
+  role: "Full Stack Developer",
+  goal: "ส่งงาน Sprint 14 ให้ครบก่อนวันศุกร์",
+  goalProgress: 72,
+  mascotName: "Work Buddy",
+  streak: 12,
 };
 
 export const todayTasks = [
-  { id: 1, title: "เรียน Docker ตอนที่ 3 — Networking", goal: "Data Engineer", time: "45 นาที", done: false },
-  { id: 2, title: "แก้โค้ด ETL pipeline + push GitHub", goal: "Portfolio", time: "1 ชม.", done: false },
-  { id: 3, title: "อ่าน Job Description ที่ AI คัดมา 3 ที่", goal: "หางาน", time: "15 นาที", done: true },
+  { id: 1, title: "แก้ UI หน้า Dashboard ตาม feedback", goal: "Sprint 14", time: "09:00-10:30", done: true },
+  { id: 2, title: "ต่อ API สำหรับบันทึก work log", goal: "WorkLog MVP", time: "10:45-12:00", done: false },
+  { id: 3, title: "เขียนสรุปสิ่งที่ทำและปัญหาที่เจอ", goal: "Daily Report", time: "16:30-17:00", done: false },
 ];
 
-export const opportunities = [
-  { id: 1, title: "Junior Data Engineer — LINE MAN Wongnai", type: "งานประจำ", match: 87, sponsored: false, reason: "ตรงกับ Skill Python + Airflow ที่คุณกำลังพัฒนา" },
-  { id: 2, title: "Hackathon: Bangkok Data Week 2026", type: "Hackathon", match: 81, sponsored: false, reason: "ตรงกับเป้าหมาย Data Engineer และมีทีมหา Data PM" },
-  { id: 3, title: "Internship — SCB 10X (Data Platform)", type: "ฝึกงาน", match: 76, sponsored: false, reason: "ใช้ Cloud Stack ที่คุณวางแผนเรียน" },
-  { id: 4, title: "ทุนเรียน Cloud — AWS re/Start", type: "ทุน", match: 72, sponsored: true, reason: "Skill Gap ตรงกับหลักสูตร" },
-  { id: 5, title: "หา Co-founder สาย Data — FoodTech Startup", type: "Co-founder", match: 64, sponsored: false, reason: "ตรงกับ Values 'สร้างของจริง'" },
+export const workLogs = [
+  {
+    id: 1,
+    date: "30 มิ.ย. 2026",
+    project: "WorkLog MVP",
+    task: "ออกแบบ flow การเพิ่มบันทึกงานรายวัน",
+    duration: "2 ชม.",
+    status: "เสร็จแล้ว",
+    mood: "โฟกัสดี",
+    note: "แยกช่องสิ่งที่ทำ ปัญหา และ next step เพื่อให้สรุปรายวันง่ายขึ้น",
+  },
+  {
+    id: 2,
+    date: "30 มิ.ย. 2026",
+    project: "Sprint 14",
+    task: "แก้ responsive layout หน้า Dashboard",
+    duration: "1.5 ชม.",
+    status: "กำลังทำ",
+    mood: "ติดนิดหน่อย",
+    note: "ยังต้องเช็ก card บน mobile อีกครั้ง",
+  },
+  {
+    id: 3,
+    date: "29 มิ.ย. 2026",
+    project: "House Visualizer",
+    task: "อ่านโครงสร้างโปรเจกต์ของเพื่อนและจดจุดที่ reuse ได้",
+    duration: "1 ชม.",
+    status: "เสร็จแล้ว",
+    mood: "เข้าใจมากขึ้น",
+    note: "ใช้ shell, card, dialog และ calendar layout เดิมมาต่อยอดได้",
+  },
 ];
 
 export const insights = [
-  { id: 1, text: "สัปดาห์นี้คุณก้าวไปกับเป้าหมาย Data Engineer มากกว่าสัปดาห์ก่อน 28%", time: "วันนี้ 09:12" },
-  { id: 2, text: "โค้ดที่ push 14 commits ล่าสุด สะท้อนว่า SQL ของคุณแข็งแล้ว ลองเริ่ม Docker ได้เลย", time: "เมื่อวาน" },
-  { id: 3, text: "ตำแหน่ง Data Engineer ในไทย 3 เดือนที่ผ่านมา ต้องการ dbt เพิ่มขึ้น 41%", time: "2 วันก่อน" },
-];
-
-export const identity = [
-  { key: "Personality", label: "บุคลิก", value: "นักวางแผนที่ลงมือทำ", detail: "คิดเป็นระบบ แต่ไม่ติดวิเคราะห์นาน", source: "จากคำตอบ Onboarding + พฤติกรรมการใช้แอป" },
-  { key: "Skills", label: "ทักษะหลัก", value: "Python · SQL · Git", detail: "Docker กำลังพัฒนา · Cloud ยังเริ่มต้น", source: "จาก GitHub 142 commits + Vault" },
-  { key: "Interests", label: "ความสนใจ", value: "Data · System Design · FinTech", detail: "อ่านบทความสาย Data บ่อยที่สุด", source: "จากคำถามที่ถาม AI Mentor" },
-  { key: "Values", label: "คุณค่า", value: "สร้างของจริง มากกว่า ตำแหน่งโต", detail: "เลือก Hackathon มากกว่า Networking Event", source: "จากตัวเลือกที่กดใน Opportunity" },
-  { key: "Working Style", label: "สไตล์ทำงาน", value: "Deep work ช่วงเช้า · ทีมเล็ก", detail: "ทำงานยาว 2-3 ชม.ติดได้ดีที่สุด", source: "จาก Calendar OS" },
-  { key: "Learning Style", label: "สไตล์เรียน", value: "ลงมือทำก่อน อ่านทีหลัง", detail: "Tutorial → Build → Read Docs", source: "จากลำดับ Resource ที่คลิก" },
-  { key: "Risk Profile", label: "ระดับการเสี่ยง", value: "กล้าเสี่ยงปานกลาง", detail: "พร้อมลองของใหม่ถ้าวางแผนไว้ก่อน", source: "จากคำถาม Onboarding" },
-  { key: "Leadership", label: "ภาวะผู้นำ", value: "ผู้นำแบบลงมือทำให้ดู", detail: "ชอบรับงานยากเป็นคนแรก", source: "จาก Experience Vault" },
+  { id: 1, text: "วันนี้ใช้เวลาไปกับงาน Sprint 14 มากที่สุด และยังเหลืองาน API ที่ควรปิดก่อนพักกลางวันพรุ่งนี้", time: "วันนี้ 17:10" },
+  { id: 2, text: "งานที่ค้างมักเป็นงานที่ยังไม่แตก task ย่อย ลองแบ่งเป็น 30-45 นาทีต่อชิ้น", time: "เมื่อวาน" },
+  { id: 3, text: "ช่วง 09:00-11:00 เป็นเวลาที่ทำงาน UI ได้เร็วที่สุดจาก log 7 วันที่ผ่านมา", time: "2 วันที่แล้ว" },
 ];
 
 export const goals = [
-  { id: 1, title: "เป็น Data Engineer ภายใน 8 เดือน", progress: 42, sub: 7, done: 3, color: "yellow" },
-  { id: 2, title: "ทำ Portfolio Data Pipeline 3 ชิ้น", progress: 33, sub: 3, done: 1, color: "ink" },
-  { id: 3, title: "อ่านหนังสือ System Design Interview", progress: 60, sub: 12, done: 7, color: "ink" },
+  { id: 1, title: "ปิด WorkLog MVP", progress: 72, sub: 6, done: 4, color: "yellow" },
+  { id: 2, title: "ทำตารางงานรายสัปดาห์", progress: 50, sub: 4, done: 2, color: "ink" },
+  { id: 3, title: "สรุปรายงานส่งอาจารย์/หัวหน้า", progress: 35, sub: 5, done: 2, color: "ink" },
 ];
-
-export const experiences = [
-  { id: 1, type: "Project", title: "ETL Pipeline สำหรับร้านกาแฟ", period: "ก.ย. 2025 – ปัจจุบัน", verified: true },
-  { id: 2, type: "Certificate", title: "Google Data Analytics Professional", period: "ส.ค. 2025", verified: true },
-  { id: 3, type: "Competition", title: "Super AI Engineer Season 4 — รอบคัด", period: "ก.ค. 2025", verified: true },
-  { id: 4, type: "Volunteer", title: "สอน Python ให้รุ่นน้องคณะ", period: "ปี 3 เทอม 2", verified: false },
-  { id: 5, type: "Job", title: "Part-time Data Assistant — SME ค้าปลีก", period: "พ.ค. – ก.ค. 2025", verified: true },
-];
-
-export const careerGap = {
-  role: "Data Engineer (Junior, ไทย)",
-  updated: "อัปเดต 19 มิ.ย. 2026",
-  have: [
-    { skill: "Python", level: 85 },
-    { skill: "SQL", level: 78 },
-    { skill: "Git / GitHub", level: 72 },
-    { skill: "Linux Basics", level: 60 },
-  ],
-  gap: [
-    { skill: "Docker", level: 25, demand: 92 },
-    { skill: "Airflow / dbt", level: 12, demand: 78 },
-    { skill: "AWS / GCP", level: 18, demand: 88 },
-    { skill: "System Design", level: 30, demand: 65 },
-  ],
-};
 
 export const calendar = [
-  { day: "จ.", events: [{ title: "Docker ตอนที่ 3", goal: true, time: "07:00" }, { title: "เรียน", goal: false, time: "09:00" }] },
-  { day: "อ.", events: [{ title: "ETL coding", goal: true, time: "06:30" }, { title: "ประชุมโปรเจกต์", goal: true, time: "14:00" }] },
-  { day: "พ.", events: [{ title: "อ่าน System Design", goal: true, time: "07:00" }] },
-  { day: "พฤ.", events: [{ title: "Pair coding", goal: true, time: "19:00" }] },
-  { day: "ศ.", events: [{ title: "Demo + retro", goal: true, time: "17:00" }, { title: "กินข้าวกับเพื่อน", goal: false, time: "19:30" }] },
-  { day: "ส.", events: [{ title: "Side project", goal: true, time: "10:00" }] },
-  { day: "อา.", events: [{ title: "พักผ่อน", goal: false, time: "—" }] },
+  { day: "จ.", events: [{ title: "Plan week", goal: true, time: "09:00" }, { title: "Project sync", goal: false, time: "13:30" }] },
+  { day: "อ.", events: [{ title: "Build work log form", goal: true, time: "10:00" }, { title: "Daily summary", goal: true, time: "16:30" }] },
+  { day: "พ.", events: [{ title: "API integration", goal: true, time: "09:30" }, { title: "Review with friend", goal: false, time: "15:00" }] },
+  { day: "พฤ.", events: [{ title: "Fix bugs", goal: true, time: "10:00" }, { title: "Write report", goal: true, time: "14:00" }] },
+  { day: "ศ.", events: [{ title: "Demo", goal: true, time: "11:00" }, { title: "Retro", goal: true, time: "16:00" }] },
+  { day: "ส.", events: [{ title: "Polish UI", goal: true, time: "10:30" }] },
+  { day: "อา.", events: [{ title: "พัก / ทบทวนเบา ๆ", goal: false, time: "-" }] },
 ];
 
-export const weekSummary = { onGoal: 68, other: 32 };
+export const weekSummary = { onGoal: 74, other: 26 };
 
 export const growthStats = [
-  { label: "Skills เพิ่ม", value: "+14%", sub: "เทียบเดือนก่อน" },
-  { label: "Projects ใหม่", value: "+2", sub: "ETL & dbt demo" },
-  { label: "Knowledge เพิ่ม", value: "+22%", sub: "อ่าน + จด Insight" },
-  { label: "Experience", value: "+3", sub: "ชิ้นยืนยันแล้ว" },
+  { label: "เวลาทำงาน", value: "24.5 ชม.", sub: "รวม 7 วันที่ผ่านมา" },
+  { label: "งานเสร็จ", value: "18", sub: "จาก 25 task" },
+  { label: "Log ต่อเนื่อง", value: "12 วัน", sub: "จดทุกวันหลังเลิกงาน" },
+  { label: "งานค้าง", value: "7", sub: "ควรจัด priority ใหม่" },
 ];
 
-// 12 weeks x 7 days contribution-style grid (0-4 intensity)
 export const growthGrid: number[][] = Array.from({ length: 12 }, (_, w) =>
   Array.from({ length: 7 }, (_, d) => {
-    const x = (w * 7 + d) % 13;
-    if (w < 2) return x % 5 === 0 ? 1 : 0;
-    if (w < 5) return [0, 1, 2, 1, 0, 2, 3][d];
-    if (w < 8) return [1, 2, 2, 3, 2, 3, 1][d];
-    return [2, 3, 3, 4, 3, 4, 2][d];
+    if (w < 2) return [0, 1, 1, 0, 2, 1, 0][d];
+    if (w < 6) return [1, 2, 2, 3, 1, 2, 1][d];
+    if (w < 9) return [2, 3, 3, 2, 4, 2, 1][d];
+    return [3, 3, 4, 3, 4, 2, 2][d];
   }),
 );
 
+export const opportunities = [
+  { id: 1, title: "เตรียม Daily Report", type: "รายงาน", match: 92, sponsored: false, reason: "ดึงจาก work log วันนี้ได้ทันที" },
+  { id: 2, title: "แตก API task เป็น 3 งานย่อย", type: "จัดงาน", match: 84, sponsored: false, reason: "ช่วยลดงานค้างก่อนเดโม" },
+  { id: 3, title: "จองเวลา review กับเพื่อน", type: "ทีม", match: 76, sponsored: false, reason: "มี dependency ที่ควรคุยก่อน merge" },
+  { id: 4, title: "สรุป blocker รายสัปดาห์", type: "ปรับปรุง", match: 68, sponsored: false, reason: "พบ blocker ซ้ำเรื่อง scope ไม่ชัด" },
+];
+
+export const identity = [
+  { key: "Focus", label: "ช่วงโฟกัส", value: "09:00-11:00", detail: "ทำงาน coding/UI ได้เร็วสุด", source: "จาก work log 12 วัน" },
+  { key: "Pattern", label: "รูปแบบงาน", value: "ทำดีเมื่อ task เล็ก", detail: "งาน 30-45 นาทีปิดได้บ่อยกว่า", source: "จาก task completion" },
+  { key: "Blocker", label: "ปัญหาซ้ำ", value: "scope ไม่ชัด", detail: "ควรเขียน acceptance criteria ก่อนเริ่ม", source: "จาก note รายวัน" },
+];
+
+export const experiences = workLogs.map((log) => ({
+  id: log.id,
+  type: log.project,
+  title: log.task,
+  period: `${log.date} · ${log.duration}`,
+  verified: log.status === "เสร็จแล้ว",
+}));
+
+export const careerGap = {
+  role: "WorkLog MVP",
+  updated: "อัปเดต 30 มิ.ย. 2026",
+  have: [
+    { skill: "UI Layout", level: 85 },
+    { skill: "React State", level: 72 },
+    { skill: "Task Planning", level: 70 },
+    { skill: "Daily Summary", level: 64 },
+  ],
+  gap: [
+    { skill: "Persist Data", level: 30, demand: 90 },
+    { skill: "Export Report", level: 20, demand: 70 },
+    { skill: "Calendar Sync", level: 15, demand: 65 },
+    { skill: "Team Review Flow", level: 35, demand: 60 },
+  ],
+};
+
 export const mentorChat = [
-  { from: "mentor", text: "สวัสดี ภูมิ วันนี้คุณเหลือ 45 นาทีก่อนคลาส อยากดู Docker ตอนที่ 3 ต่อ หรือเก็บมาทำพรุ่งนี้ดี?" },
-  { from: "me", text: "ขอเก็บไว้พรุ่งนี้ วันนี้อยากแก้โค้ด ETL ที่ค้างก่อน" },
-  { from: "mentor", text: "โอเค ผมจะเลื่อน Docker ไป 06:30 พรุ่งนี้ให้ และโน้ตไว้ใน Goal 'Data Engineer'" },
-  { from: "mentor", text: "ระหว่างที่คุณแก้โค้ด ผมเห็นว่า PR ก่อนหน้ามี test ตกอยู่ 1 อัน อยากให้ผมสรุปสาเหตุให้ก่อนเริ่มมั้ย?" },
+  { from: "mentor", text: "วันนี้คุณเหลืองาน API กับสรุปรายวัน อยากปิด API ก่อนแล้วค่อยให้ระบบช่วย draft report ไหม?" },
+  { from: "me", text: "เอา API ก่อน เพราะถ้าเสร็จจะ demo ได้" },
+  { from: "mentor", text: "โอเค ผมจะแยกเป็น 3 task: schema, form submit, mock persistence แล้วล็อกเวลา 10:00-12:00 ให้" },
 ];

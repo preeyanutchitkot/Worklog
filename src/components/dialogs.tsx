@@ -19,17 +19,17 @@ type AddGoalDialogProps = {
 export function AddGoalDialog({ trigger, onCreate }: AddGoalDialogProps) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [horizon, setHorizon] = useState("6 เดือน");
+  const [horizon, setHorizon] = useState("วันนี้");
   const [why, setWhy] = useState("");
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim()) {
-      toast.error("กรอกชื่อเป้าหมายก่อนนะ");
+      toast.error("กรอกชื่องานก่อนนะ");
       return;
     }
     onCreate?.({ title: title.trim(), horizon, why: why.trim() });
-    toast.success("เพิ่มเป้าหมายแล้ว", { description: title });
+    toast.success("เพิ่มงานแล้ว", { description: title });
     setTitle("");
     setWhy("");
     setOpen(false);
@@ -40,24 +40,24 @@ export function AddGoalDialog({ trigger, onCreate }: AddGoalDialogProps) {
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="border-2 border-ink bg-cream sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="font-display text-2xl">เพิ่มเป้าหมายใหม่</DialogTitle>
-          <DialogDescription>เก็บไว้ไม่เกิน 3 อันพร้อมกัน — เพื่อให้ลงมือทำได้จริง</DialogDescription>
+          <DialogTitle className="font-display text-2xl">เพิ่มงานใหม่</DialogTitle>
+          <DialogDescription>ใส่งานที่ต้องทำ พร้อมเหตุผลหรือ note สั้น ๆ เพื่อใช้สรุป work log ตอนท้ายวัน</DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           <div>
-            <label className="text-xs font-mono uppercase tracking-widest">ชื่อเป้าหมาย</label>
+            <label className="text-xs font-mono uppercase tracking-widest">ชื่องาน</label>
             <input
               autoFocus
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="เช่น เป็น Data Engineer ภายใน 8 เดือน"
+              placeholder="เช่น ต่อ API สำหรับบันทึก work log"
               className="mt-1 w-full rounded-md border-2 border-ink bg-card px-3 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-yellow"
             />
           </div>
           <div>
-            <label className="text-xs font-mono uppercase tracking-widest">ระยะเวลา</label>
+            <label className="text-xs font-mono uppercase tracking-widest">กำหนดเวลา</label>
             <div className="mt-1 flex flex-wrap gap-2">
-              {["1 เดือน", "3 เดือน", "6 เดือน", "1 ปี"].map((h) => (
+              {["วันนี้", "พรุ่งนี้", "สัปดาห์นี้", "ยังไม่กำหนด"].map((h) => (
                 <button
                   key={h}
                   type="button"
@@ -72,28 +72,21 @@ export function AddGoalDialog({ trigger, onCreate }: AddGoalDialogProps) {
             </div>
           </div>
           <div>
-            <label className="text-xs font-mono uppercase tracking-widest">ทำไมถึงสำคัญ</label>
+            <label className="text-xs font-mono uppercase tracking-widest">Note</label>
             <textarea
               value={why}
               onChange={(e) => setWhy(e.target.value)}
               rows={3}
-              placeholder="เขียนสั้นๆ — AI จะใช้ตอนเตือนคุณว่าอย่ายอมแพ้"
+              placeholder="เขียน context สั้น ๆ เช่น blocker, dependency, หรือผลลัพธ์ที่ต้องการ"
               className="mt-1 w-full rounded-md border-2 border-ink bg-card px-3 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-yellow"
             />
           </div>
           <DialogFooter className="gap-2">
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="rounded-md border-2 border-ink bg-card px-4 py-2 text-sm font-medium"
-            >
+            <button type="button" onClick={() => setOpen(false)} className="rounded-md border-2 border-ink bg-card px-4 py-2 text-sm font-medium">
               ยกเลิก
             </button>
-            <button
-              type="submit"
-              className="rounded-md border-2 border-ink bg-ink px-5 py-2 text-sm font-semibold text-cream shadow-brutal-sm"
-            >
-              บันทึกเป้าหมาย
+            <button type="submit" className="rounded-md border-2 border-ink bg-ink px-5 py-2 text-sm font-semibold text-cream shadow-brutal-sm">
+              บันทึกงาน
             </button>
           </DialogFooter>
         </form>
@@ -103,15 +96,10 @@ export function AddGoalDialog({ trigger, onCreate }: AddGoalDialogProps) {
 }
 
 const searchIndex = [
-  { label: "Goals Center", to: "/app/goals", hint: "เป้าหมายหลัก 3 อัน" },
-  { label: "AI Mentor", to: "/app/mentor", hint: "ถาม AI ที่รู้บริบทคุณ" },
-  { label: "Calendar OS", to: "/app/calendar", hint: "ตารางสัปดาห์ + เวลา on-goal" },
-  { label: "Growth Graph", to: "/app/growth", hint: "การเติบโต 12 สัปดาห์" },
-  { label: "Career Lab", to: "/app/career", hint: "Gap analysis เทียบตลาด" },
-  { label: "Opportunity Engine", to: "/app/opportunities", hint: "งาน · Hackathon · ทุน" },
-  { label: "Experience Vault", to: "/app/experience", hint: "Growth Resume" },
-  { label: "Research Center", to: "/app/research", hint: "ถามอะไรก็ได้" },
-  { label: "Identity Hub", to: "/app/identity", hint: "บุคลิก ทักษะ คุณค่า" },
+  { label: "แดชบอร์ด", to: "/app", hint: "งานวันนี้และบันทึกล่าสุด" },
+  { label: "งานและเป้าหมาย", to: "/app/goals", hint: "backlog, task ย่อย, สถานะงาน" },
+  { label: "ตารางงาน", to: "/app/calendar", hint: "แผนรายสัปดาห์และเวลาโฟกัส" },
+  { label: "สรุปผลงาน", to: "/app/growth", hint: "ชั่วโมงทำงาน งานเสร็จ และ streak" },
 ];
 
 export function SearchDialog({ trigger }: { trigger: React.ReactNode }) {
@@ -143,7 +131,7 @@ export function SearchDialog({ trigger }: { trigger: React.ReactNode }) {
             autoFocus
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="ค้นหาโมดูล หรือสิ่งที่อยากทำ…"
+            placeholder="ค้นหาหน้า หรือสิ่งที่อยากทำ..."
             className="w-full rounded-md bg-transparent px-2 py-2 text-base focus:outline-none"
           />
         </div>
@@ -156,7 +144,7 @@ export function SearchDialog({ trigger }: { trigger: React.ReactNode }) {
                   setOpen(false);
                   navigate({ to: r.to });
                 }}
-                className="flex w-full items-center justify-between rounded-md px-3 py-2.5 text-left text-sm hover:bg-yellow/40"
+                className="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2.5 text-left text-sm hover:bg-yellow/40"
               >
                 <span className="font-semibold">{r.label}</span>
                 <span className="text-xs text-muted-foreground">{r.hint}</span>
@@ -165,8 +153,8 @@ export function SearchDialog({ trigger }: { trigger: React.ReactNode }) {
           ))}
         </ul>
         <div className="flex items-center justify-between border-t-2 border-ink px-4 py-2 text-xs text-muted-foreground">
-          <span>↵ เปิด</span>
-          <span>⌘K สลับเปิด/ปิด</span>
+          <span>Enter เพื่อเปิด</span>
+          <span>Ctrl/⌘ K</span>
         </div>
       </DialogContent>
     </Dialog>
@@ -189,7 +177,7 @@ export function SubgoalsDialog({
       <DialogContent className="border-2 border-ink bg-cream sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="font-display text-xl">{title}</DialogTitle>
-          <DialogDescription>กดที่ช่องเพื่อทำเครื่องหมายเสร็จ</DialogDescription>
+          <DialogDescription>ติ๊ก task ย่อยที่เสร็จแล้วเพื่ออัปเดตความคืบหน้า</DialogDescription>
         </DialogHeader>
         <ul className="space-y-2">
           {items.map((s) => (
@@ -200,7 +188,7 @@ export function SubgoalsDialog({
                   checked={s.done}
                   onChange={() => {
                     setItems((cur) => cur.map((i) => (i.id === s.id ? { ...i, done: !i.done } : i)));
-                    toast.success(s.done ? "เปิดงานกลับมาแล้ว" : "เก่งมาก! บันทึกแล้ว");
+                    toast.success(s.done ? "เปิดงานกลับมาแล้ว" : "บันทึกว่าเสร็จแล้ว");
                   }}
                   className="h-4 w-4 accent-ink"
                 />
@@ -225,20 +213,16 @@ export function ConfirmButton({
   className?: string;
   variant?: "ghost" | "primary";
 }) {
-  const base =
-    variant === "primary"
-      ? "border-2 border-ink bg-yellow shadow-brutal-sm"
-      : "border-2 border-ink bg-card";
+  const base = variant === "primary" ? "border-2 border-ink bg-yellow shadow-brutal-sm" : "border-2 border-ink bg-card";
   return (
     <button
       type="button"
       onClick={() => toast(toastMsg)}
-      className={`rounded-md ${base} px-4 py-2 text-sm font-medium hover:-translate-y-0.5 transition-transform ${className}`}
+      className={`rounded-md ${base} px-4 py-2 text-sm font-medium transition-transform hover:-translate-y-0.5 ${className}`}
     >
       {label}
     </button>
   );
 }
 
-// Re-export Link so callers can use as DialogTrigger fallback
 export { Link };

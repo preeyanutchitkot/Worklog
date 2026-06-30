@@ -1,22 +1,16 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { ClipboardList, LayoutDashboard, Search, Target, CalendarDays, BarChart3 } from "lucide-react";
 import { Mascot } from "./Mascot";
 import { user } from "@/lib/mock";
 import { LogoMark } from "./Logo";
 import { AddGoalDialog, SearchDialog } from "./dialogs";
 
 const nav = [
-  { to: "/app", label: "โฮม", icon: "◉" },
-  { to: "/app/goals", label: "เป้าหมาย", icon: "◎" },
-  { to: "/app/mentor", label: "AI Mentor", icon: "✦" },
-  { to: "/app/calendar", label: "ปฏิทิน", icon: "▦" },
-  { to: "/app/growth", label: "Growth", icon: "▥" },
-  { to: "/app/career", label: "Career Lab", icon: "↗" },
-  { to: "/app/opportunities", label: "โอกาส", icon: "◆" },
-  { to: "/app/experience", label: "Experience", icon: "✸" },
-  { to: "/app/research", label: "Research", icon: "?" },
-  { to: "/app/identity", label: "Identity Hub", icon: "☺" },
-  { to: "/app/profile", label: "โปรไฟล์", icon: "♛" },
+  { to: "/app", label: "แดชบอร์ด", icon: LayoutDashboard },
+  { to: "/app/goals", label: "งานและเป้าหมาย", icon: Target },
+  { to: "/app/calendar", label: "ตารางงาน", icon: CalendarDays },
+  { to: "/app/growth", label: "สรุปผลงาน", icon: BarChart3 },
 ];
 
 export function AppShell({ children, title, subtitle }: { children: ReactNode; title: string; subtitle?: string }) {
@@ -24,12 +18,11 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
   return (
     <div className="min-h-screen bg-cream text-ink">
       <div className="flex">
-        {/* Sidebar */}
         <aside className="sticky top-0 hidden h-screen w-72 shrink-0 flex-col border-r-2 border-ink bg-sidebar text-sidebar-foreground md:flex">
           <Link to="/" className="flex items-center gap-2.5 border-b-2 border-sidebar-border px-6 py-5">
             <LogoMark size={36} />
             <span className="font-display text-xl font-bold tracking-tight">
-              Life<span className="text-yellow">OS</span>
+              Work<span className="text-yellow">Log</span>
             </span>
           </Link>
 
@@ -40,7 +33,7 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
               </div>
               <div>
                 <div className="text-sm font-semibold">{user.mascotName}</div>
-                <div className="text-xs text-sidebar-foreground/60">Lv.3 · streak {user.streak} วัน</div>
+                <div className="text-xs text-sidebar-foreground/60">จดต่อเนื่อง {user.streak} วัน</div>
               </div>
             </div>
           </div>
@@ -48,6 +41,7 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
           <nav className="flex-1 overflow-y-auto px-3 py-4">
             {nav.map((item) => {
               const active = item.to === "/app" ? pathname === "/app" : pathname.startsWith(item.to);
+              const Icon = item.icon;
               return (
                 <Link
                   key={item.to}
@@ -58,7 +52,7 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
                       : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                   }`}
                 >
-                  <span className="w-5 text-center text-base">{item.icon}</span>
+                  <Icon className="h-4 w-4" />
                   {item.label}
                 </Link>
               );
@@ -66,13 +60,12 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
           </nav>
 
           <div className="border-t-2 border-sidebar-border px-6 py-4">
-            <div className="text-xs text-sidebar-foreground/60">เข้าใช้งานในชื่อ</div>
+            <div className="text-xs text-sidebar-foreground/60">ผู้ใช้งาน</div>
             <div className="mt-0.5 text-sm font-semibold">{user.name}</div>
             <div className="text-xs text-sidebar-foreground/60">{user.role}</div>
           </div>
         </aside>
 
-        {/* Main */}
         <main className="min-w-0 flex-1">
           <header className="sticky top-0 z-10 flex flex-wrap items-end justify-between gap-4 border-b-2 border-ink bg-cream/95 px-6 py-5 backdrop-blur md:px-10 md:py-7">
             <div>
@@ -82,15 +75,17 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
             <div className="flex items-center gap-2">
               <SearchDialog
                 trigger={
-                  <button className="rounded-md border-2 border-ink bg-card px-3 py-2 text-sm font-medium shadow-brutal-sm transition-transform hover:-translate-y-0.5">
-                    ค้นหา ⌘K
+                  <button className="inline-flex items-center gap-2 rounded-md border-2 border-ink bg-card px-3 py-2 text-sm font-medium shadow-brutal-sm transition-transform hover:-translate-y-0.5">
+                    <Search className="h-4 w-4" />
+                    ค้นหา
                   </button>
                 }
               />
               <AddGoalDialog
                 trigger={
-                  <button className="rounded-md border-2 border-ink bg-yellow px-3 py-2 text-sm font-semibold shadow-brutal-sm transition-transform hover:-translate-y-0.5">
-                    + เพิ่มเป้าหมาย
+                  <button className="inline-flex items-center gap-2 rounded-md border-2 border-ink bg-yellow px-3 py-2 text-sm font-semibold shadow-brutal-sm transition-transform hover:-translate-y-0.5">
+                    <ClipboardList className="h-4 w-4" />
+                    เพิ่มงาน
                   </button>
                 }
               />
@@ -117,11 +112,7 @@ export function Card({
     yellow: "bg-yellow text-ink",
     ink: "bg-ink text-cream",
   };
-  return (
-    <div className={`rounded-2xl border-2 border-ink ${tones[tone]} shadow-brutal-sm ${className}`}>
-      {children}
-    </div>
-  );
+  return <div className={`rounded-lg border-2 border-ink ${tones[tone]} shadow-brutal-sm ${className}`}>{children}</div>;
 }
 
 export function Pill({ children, tone = "light" }: { children: ReactNode; tone?: "light" | "yellow" | "ink" }) {
