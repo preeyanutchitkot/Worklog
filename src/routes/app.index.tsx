@@ -47,6 +47,7 @@ function Home() {
     endTime: "10:00",
     note: "",
   });
+  const [showAllLogs, setShowAllLogs] = useState(false);
   const [sheetUrlInput, setSheetUrlInput] = useState(getSheetUrl());
 
 
@@ -323,7 +324,7 @@ function Home() {
               </Link>
             </div>
             <div className="mt-5 grid gap-3 md:grid-cols-3">
-              {logs.slice(0, 6).map((log) => (
+              {logs.slice(0, showAllLogs ? undefined : 6).map((log) => (
                 <div key={log.id} className="rounded-lg border-2 border-ink bg-cream p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -348,6 +349,16 @@ function Home() {
                 </div>
               ))}
             </div>
+            {logs.length > 6 && (
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => setShowAllLogs(!showAllLogs)}
+                  className="rounded-md border-2 border-ink bg-card px-4 py-2 text-sm font-semibold shadow-brutal-sm transition-transform hover:-translate-y-0.5"
+                >
+                  {showAllLogs ? "แสดงน้อยลง" : `ดูทั้งหมด (${logs.length} รายการ)`}
+                </button>
+              </div>
+            )}
           </div>
         </Card>
 
