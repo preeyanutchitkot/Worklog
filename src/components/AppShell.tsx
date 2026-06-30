@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { goals as seedGoals, todayTasks } from "@/lib/mock";
 import type { ReactNode } from "react";
 import { ClipboardList, LayoutDashboard, Search, Target, CalendarDays, BarChart3 } from "lucide-react";
 import { Mascot } from "./Mascot";
@@ -86,6 +87,23 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
               />
               <AddGoalDialog
                 onCreate={(goal) => {
+                  // Save to goals
+                  const goalsKey = "worklog-goals";
+                  const savedGoals = window.localStorage.getItem(goalsKey);
+                  const currentGoals = savedGoals ? JSON.parse(savedGoals) : seedGoals.map(g => ({...g, paused: false}));
+                  currentGoals.push({ id: Date.now(), title: goal.title, progress: 0, sub: 3, done: 0, color: "ink", paused: false });
+                  window.localStorage.setItem(goalsKey, JSON.stringify(currentGoals));
+
+                  // Save to tasks if today
+                  if (goal.horizon === "วันนี้") {
+                    const tasksKey = "worklog-tasks";
+                    const savedTasks = window.localStorage.getItem(tasksKey);
+                    const currentTasks = savedTasks ? JSON.parse(savedTasks) : todayTasks;
+                    currentTasks.unshift({ id: Date.now(), title: goal.title, time: "ยังไม่ระบุเวลา", goal: "งานใหม่", done: false });
+                    window.localStorage.setItem(tasksKey, JSON.stringify(currentTasks));
+                  }
+
+                  // Dispatch event for currently mounted components to update their React state
                   window.dispatchEvent(new CustomEvent("add-goal", { detail: goal }));
                 }}
                 trigger={
