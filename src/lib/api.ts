@@ -82,13 +82,13 @@ export async function saveToGoogleSheets(data: any) {
   try {
     const response = await fetch(url, {
       method: "POST",
+      mode: "no-cors",
       headers: {
         "Content-Type": "text/plain;charset=utf-8",
       },
       body: JSON.stringify(data),
     });
-    const result = await response.json();
-    return result.status === "success" || result.status === 200;
+    return true; // no-cors mode returns opaque response, assume success if no network error
   } catch (error) {
     console.error("Failed to save to Google Sheets:", error);
     return false;

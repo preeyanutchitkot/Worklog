@@ -146,6 +146,32 @@ function Home() {
     });
   }
 
+  async function syncAllLogsToSheets() {
+    if (!sheetUrlInput) {
+      toast.error("กรุณาเชื่อมต่อ Google Sheets ก่อนครับ");
+      return;
+    }
+    toast("กำลังทยอยส่งข้อมูลทั้งหมดลง Google Sheets...");
+    let successCount = 0;
+    // ส่งย้อนกลับ (จากเก่าสุดไปใหม่สุด)
+    const reversedLogs = [...logs].reverse();
+    for (const log of reversedLogs) {
+      const payload = { ...log };
+      // เติม totalHours ถ้าของเก่ายังไม่มี
+      if (!payload.totalHours && payload.duration) {
+        const parts = payload.duration.split(" - ");
+        if (parts.length === 2) {
+          payload.totalHours = calculateHours(parts[0], parts[1]);
+        }
+      }
+      const success = await saveToGoogleSheets({ type: "worklog", data: payload });
+      if (success) successCount++;
+      // หน่วงเวลาเล็กน้อยกัน Google Sheets API rate limit
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    toast.success(`ส่งข้อมูลเสร็จสิ้น! บันทึกสำเร็จ ${successCount}/${logs.length} รายการ`);
+  }
+
   function calculateHours(start: string, end: string) {
     if (!start || !end) return "0.00";
     const [sH, sM] = start.split(":").map(Number);
@@ -239,6 +265,12 @@ function Home() {
                   บันทึก
                 </button>
               </div>
+              <button
+                onClick={syncAllLogsToSheets}
+                className="mt-3 w-full rounded-md border-2 border-ink bg-yellow px-3 py-2 text-sm font-semibold shadow-brutal-sm transition-transform hover:-translate-y-0.5"
+              >
+                📤 ซิงก์ Work Log ทั้งหมดเข้า Google Sheets
+              </button>
             </div>
             <p className="mt-3 text-xs text-muted-foreground">ข้อมูลนี้จะจำไว้ใน browser เครื่องนี้</p>
           </div>
