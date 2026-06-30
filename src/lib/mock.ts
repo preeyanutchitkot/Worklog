@@ -1,5 +1,5 @@
 export const user = {
-  name: "พลอย",
+  name: "",
   role: "Full Stack Developer",
   goal: "",
   goalProgress: 0,

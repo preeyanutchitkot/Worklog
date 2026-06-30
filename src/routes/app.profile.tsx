@@ -108,7 +108,19 @@ function Profile() {
                 <div className="rounded-xl border-2 border-ink bg-yellow p-2 shadow-brutal-sm">
                   <Mascot size={72} />
                 </div>
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 relative">
+                  {!editing && (
+                    <button
+                      onClick={() => {
+                        setDraft(bio);
+                        setDraftUser({ name: user.name, role: user.role });
+                        setEditing(true);
+                      }}
+                      className="absolute top-0 right-0 rounded-md border-2 border-ink bg-card px-2 py-1 text-xs font-semibold shadow-brutal-sm hover:-translate-y-0.5 transition-transform"
+                    >
+                      แก้ไขโปรไฟล์
+                    </button>
+                  )}
                   {editing ? (
                     <div className="space-y-2">
                       <input 
@@ -141,18 +153,6 @@ function Profile() {
               <div className="mt-5">
                 <div className="mb-1 flex items-center justify-between">
                   <span className="text-xs font-mono uppercase tracking-widest">เกี่ยวกับฉัน</span>
-                  {!editing && (
-                    <button
-                      onClick={() => {
-                        setDraft(bio);
-                        setDraftUser({ name: user.name, role: user.role });
-                        setEditing(true);
-                      }}
-                      className="text-xs font-semibold underline underline-offset-2"
-                    >
-                      แก้ไข
-                    </button>
-                  )}
                 </div>
                 {editing ? (
                   <div className="space-y-2">

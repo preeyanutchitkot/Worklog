@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { ClipboardList, LayoutDashboard, Search, Target, CalendarDays, BarChart3, User } from "lucide-react";
 import { Mascot } from "./Mascot";
 import { user as mockUser } from "@/lib/mock";
-import { fetchUser, useUser } from "@/lib/api";
+import { fetchUser, useUser, updateUser } from "@/lib/api";
 import { useState, useEffect } from "react";
 import { LogoMark } from "./Logo";
 import { AddGoalDialog, SearchDialog } from "./dialogs";
@@ -20,6 +20,14 @@ const nav = [
 export function AppShell({ children, title, subtitle }: { children: ReactNode; title: string; subtitle?: string }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const user = useUser();
+  const [showNamePrompt, setShowNamePrompt] = useState(false);
+  const [tempName, setTempName] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && !user.name) {
+      setShowNamePrompt(true);
+    }
+  }, [user.name]);
 
   return (
     <div className="min-h-screen bg-cream text-ink">
@@ -99,6 +107,33 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
           <div className="px-6 py-8 md:px-10 md:py-10">{children}</div>
         </main>
       </div>
+
+      {showNamePrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-xl border-2 border-ink bg-cream p-6 shadow-brutal">
+            <h2 className="font-display text-2xl font-bold">ยินดีต้อนรับสู่ WorkLog!</h2>
+            <p className="mt-2 text-sm text-muted-foreground">ก่อนเริ่มใช้งาน กรุณาบอกชื่อของคุณให้เราทราบหน่อย</p>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              if (tempName.trim()) {
+                updateUser({ ...user, name: tempName.trim() });
+                setShowNamePrompt(false);
+              }
+            }} className="mt-5 space-y-4">
+              <input 
+                autoFocus
+                value={tempName}
+                onChange={e => setTempName(e.target.value)}
+                placeholder="ชื่อของคุณ..."
+                className="w-full rounded-md border-2 border-ink bg-card px-4 py-2.5 text-base focus:outline-none focus:ring-4 focus:ring-yellow"
+              />
+              <button type="submit" className="w-full rounded-md border-2 border-ink bg-yellow py-2.5 text-base font-semibold shadow-brutal-sm">
+                เริ่มใช้งาน
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

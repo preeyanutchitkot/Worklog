@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AppShell, Card, Pill } from "@/components/AppShell";
 import { insights, todayTasks, user as seedUser, workLogs } from "@/lib/mock";
-import { getSheetUrl, setSheetUrl, useUser } from "@/lib/api";
+import { getSheetUrl, setSheetUrl, useUser, updateUser } from "@/lib/api";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({ meta: [{ title: "แดชบอร์ด · WorkLog" }] }),
@@ -175,19 +175,25 @@ function Home() {
             <div className="mt-4 space-y-3">
               <input
                 value={profile.name}
-                onChange={(e) => setProfile((cur) => ({ ...cur, name: e.target.value }))}
+                onChange={(e) => {
+                  updateUser({ ...profile, name: e.target.value });
+                }}
                 className="w-full rounded-md border-2 border-ink bg-cream px-3 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-yellow"
                 aria-label="ชื่อ"
               />
               <input
                 value={profile.role}
-                onChange={(e) => setProfile((cur) => ({ ...cur, role: e.target.value }))}
+                onChange={(e) => {
+                  updateUser({ ...profile, role: e.target.value });
+                }}
                 className="w-full rounded-md border-2 border-ink bg-cream px-3 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-yellow"
                 aria-label="ตำแหน่ง"
               />
               <textarea
                 value={profile.goal}
-                onChange={(e) => setProfile((cur) => ({ ...cur, goal: e.target.value }))}
+                onChange={(e) => {
+                  updateUser({ ...profile, goal: e.target.value });
+                }}
                 rows={3}
                 className="w-full rounded-md border-2 border-ink bg-cream px-3 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-yellow"
                 aria-label="เป้าหมาย"
