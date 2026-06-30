@@ -256,6 +256,14 @@ function Home() {
                 />
                 <button
                   onClick={() => {
+                    if (sheetUrlInput.includes("docs.google.com")) {
+                      toast.error("❌ ลิงก์ผิดครับ! ต้องใช้ลิงก์ Apps Script (script.google.com) ไม่ใช่ลิงก์ Sheet ครับ");
+                      return;
+                    }
+                    if (sheetUrlInput && !sheetUrlInput.includes("script.google.com")) {
+                      toast.error("❌ ลิงก์ไม่ถูกต้อง ต้องขึ้นต้นด้วย script.google.com");
+                      return;
+                    }
                     setSheetUrl(sheetUrlInput);
                     toast.success("บันทึกการเชื่อมต่อแล้ว (กำลังรีโหลด...)");
                     setTimeout(() => window.location.reload(), 1000);

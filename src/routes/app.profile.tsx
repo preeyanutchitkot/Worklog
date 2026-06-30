@@ -264,9 +264,21 @@ function Profile() {
                     value={sheetUrl}
                     onChange={(e) => {
                       setSheetUrlState(e.target.value);
-                      setSheetUrl(e.target.value);
                     }}
-                    placeholder="https://script.google.com/macros/s/..."
+                    onBlur={(e) => {
+                      const val = e.target.value;
+                      if (val.includes("docs.google.com")) {
+                        toast.error("❌ ลิงก์ผิดครับ! ต้องใช้ลิงก์ Apps Script (script.google.com) ไม่ใช่ลิงก์ตาราง Sheet ครับ");
+                        return;
+                      }
+                      if (val && !val.includes("script.google.com")) {
+                        toast.error("❌ ลิงก์ไม่ถูกต้อง ต้องขึ้นต้นด้วย script.google.com");
+                        return;
+                      }
+                      setSheetUrl(val);
+                      toast.success("บันทึก URL แล้ว");
+                    }}
+                    placeholder="https://script.google.com/macros/s/.../exec"
                     className="w-full rounded-md border-2 border-ink bg-cream px-3 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-yellow"
                   />
                 </div>
