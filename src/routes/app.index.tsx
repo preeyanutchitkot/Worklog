@@ -14,11 +14,21 @@ type WorkLog = (typeof workLogs)[number];
 
 const profileStorageKey = "worklog-profile";
 const logsStorageKey = "worklog-logs";
+const tasksStorageKey = "worklog-tasks";
 
 function Home() {
-  const [profile, setProfile] = useState(seedUser);
-  const [tasks, setTasks] = useState(todayTasks);
-  const [logs, setLogs] = useState<WorkLog[]>(workLogs);
+  const [profile, setProfile] = useState(() => {
+    const saved = window.localStorage.getItem(profileStorageKey);
+    return saved ? JSON.parse(saved) : seedUser;
+  });
+  const [tasks, setTasks] = useState(() => {
+    const saved = window.localStorage.getItem(tasksStorageKey);
+    return saved ? JSON.parse(saved) : todayTasks;
+  });
+  const [logs, setLogs] = useState<WorkLog[]>(() => {
+    const saved = window.localStorage.getItem(logsStorageKey);
+    return saved ? JSON.parse(saved) : workLogs;
+  });
   const [editingLogId, setEditingLogId] = useState<number | null>(null);
   const [form, setForm] = useState({
     task: "",
@@ -30,20 +40,30 @@ function Home() {
   const [sheetUrlInput, setSheetUrlInput] = useState(getSheetUrl());
 
   useEffect(() => {
-    const savedProfile = window.localStorage.getItem(profileStorageKey);
-    const savedLogs = window.localStorage.getItem(logsStorageKey);
-
-    if (savedProfile) setProfile(JSON.parse(savedProfile));
-    if (savedLogs) setLogs(JSON.parse(savedLogs));
-  }, []);
-
-  useEffect(() => {
     window.localStorage.setItem(profileStorageKey, JSON.stringify(profile));
   }, [profile]);
 
   useEffect(() => {
     window.localStorage.setItem(logsStorageKey, JSON.stringify(logs));
   }, [logs]);
+
+  useEffect(() => {
+    window.localStorage.setItem(tasksStorageKey, JSON.stringify(tasks));
+  }, [tasks]);
+
+  useEffect(() => {
+    const handleAddGoal = (e: any) => {
+      const g = e.detail;
+      if (g.horizon === "วันนี้") {
+        setTasks((cur) => [
+          { id: Date.now(), title: g.title, time: "ยังไม่ระบุเวลา", goal: "งานใหม่", done: false },
+          ...cur,
+        ]);
+      }
+    };
+    window.addEventListener("add-goal", handleAddGoal);
+    return () => window.removeEventListener("add-goal", handleAddGoal);
+  }, []);
 
   const doneCount = tasks.filter((task) => task.done).length;
 

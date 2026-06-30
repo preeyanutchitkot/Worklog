@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { AppShell, Card, Pill } from "@/components/AppShell";
 import { AddGoalDialog, SubgoalsDialog } from "@/components/dialogs";
@@ -10,8 +10,13 @@ export const Route = createFileRoute("/app/goals")({
   component: Goals,
 });
 
+const goalsStorageKey = "worklog-goals";
+
 function Goals() {
-  const [list, setList] = useState(() => seedGoals.map((goal) => ({ ...goal, paused: false })));
+  const [list, setList] = useState(() => {
+    const saved = window.localStorage.getItem(goalsStorageKey);
+    return saved ? JSON.parse(saved) : seedGoals.map((goal) => ({ ...goal, paused: false }));
+  });
   const active = list.filter((goal) => !goal.paused);
 
   function addGoal(goal: { title: string; horizon: string; why: string }) {
@@ -20,6 +25,16 @@ function Goals() {
       { id: Date.now(), title: goal.title, progress: 0, sub: 3, done: 0, color: "ink", paused: false },
     ]);
   }
+
+  useEffect(() => {
+    window.localStorage.setItem(goalsStorageKey, JSON.stringify(list));
+  }, [list]);
+
+  useEffect(() => {
+    const handler = (e: any) => addGoal(e.detail);
+    window.addEventListener("add-goal", handler);
+    return () => window.removeEventListener("add-goal", handler);
+  }, []);
 
   function togglePause(id: number) {
     setList((cur) => cur.map((goal) => (goal.id === id ? { ...goal, paused: !goal.paused } : goal)));
