@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { AppShell, Card, Pill } from "@/components/AppShell";
 import { Mascot } from "@/components/Mascot";
 import { identity, experiences, growthStats, goals } from "@/lib/mock";
-import { saveToGoogleSheets, useUser } from "@/lib/api";
+import { saveToGoogleSheets, useUser, updateUser, getSheetUrl, setSheetUrl } from "@/lib/api";
 
 export const Route = createFileRoute("/app/profile")({
   head: () => ({ meta: [{ title: "โปรไฟล์ · LifeOS" }] }),
@@ -15,6 +15,10 @@ function Profile() {
   const user = useUser();
   const [editing, setEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [sheetUrl, setSheetUrlState] = useState(getSheetUrl());
+  const [showSetup, setShowSetup] = useState(false);
+  
+  const [draftUser, setDraftUser] = useState({ name: "", role: "" });
   
   const [bio, setBio] = useState(() => {
     const saved = window.localStorage.getItem("worklog-profile-bio");
@@ -24,7 +28,12 @@ function Profile() {
   
   const [links, setLinks] = useState(() => {
     const saved = window.localStorage.getItem("worklog-profile-links");
-    if (saved) return JSON.parse(saved);
+    if (saved && saved !== "undefined") {
+      try { 
+        const parsed = JSON.parse(saved); 
+        if (Array.isArray(parsed)) return parsed;
+      } catch(e) {}
+    }
     return [
       { label: "GitHub", value: "github.com/phumtnp" },
       { label: "LinkedIn", value: "linkedin.com/in/phumtnp" },
@@ -34,7 +43,12 @@ function Profile() {
 
   const [identityList, setIdentityList] = useState(() => {
     const saved = window.localStorage.getItem("worklog-identity");
-    if (saved) return JSON.parse(saved);
+    if (saved && saved !== "undefined") {
+      try { 
+        const parsed = JSON.parse(saved); 
+        if (Array.isArray(parsed)) return parsed;
+      } catch(e) {}
+    }
     return identity && identity.length > 0 ? identity : [
       { key: "core_skill", label: "ทักษะหลัก", value: "Full Stack Development", detail: "เชี่ยวชาญ React และ Node.js", source: "Work logs ล่าสุด" },
       { key: "interest", label: "ความสนใจ", value: "System Design", detail: "ชอบอ่านบทความเกี่ยวกับ Architecture", source: "พฤติกรรมการอ่าน" },
@@ -43,7 +57,12 @@ function Profile() {
 
   const [expList, setExpList] = useState(() => {
     const saved = window.localStorage.getItem("worklog-experiences");
-    if (saved) return JSON.parse(saved);
+    if (saved && saved !== "undefined") {
+      try { 
+        const parsed = JSON.parse(saved); 
+        if (Array.isArray(parsed)) return parsed;
+      } catch(e) {}
+    }
     return experiences && experiences.length > 0 ? experiences : [
       { id: 1, type: "Project", title: "สร้าง LifeOS MVP ด้วย React", period: "มิ.ย. 2026 - ปัจจุบัน", verified: false },
     ];
@@ -56,6 +75,7 @@ function Profile() {
 
   function save() {
     setBio(draft);
+    updateUser({ ...user, name: draftUser.name, role: draftUser.role });
     setEditing(false);
     toast.success("บันทึกโปรไฟล์แล้ว");
   }
@@ -89,8 +109,27 @@ function Profile() {
                   <Mascot size={72} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h2 className="font-display text-2xl font-bold leading-tight">{user.name}</h2>
-                  <div className="mt-1 text-sm text-muted-foreground">{user.role}</div>
+                  {editing ? (
+                    <div className="space-y-2">
+                      <input 
+                        value={draftUser.name} 
+                        onChange={(e) => setDraftUser({...draftUser, name: e.target.value})} 
+                        className="w-full rounded-md border-2 border-ink bg-card p-1.5 text-lg font-bold focus:outline-none focus:ring-4 focus:ring-yellow" 
+                        placeholder="ชื่อของคุณ"
+                      />
+                      <input 
+                        value={draftUser.role} 
+                        onChange={(e) => setDraftUser({...draftUser, role: e.target.value})} 
+                        className="w-full rounded-md border-2 border-ink bg-card p-1.5 text-sm focus:outline-none focus:ring-4 focus:ring-yellow" 
+                        placeholder="ตำแหน่ง หรือ Role"
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <h2 className="font-display text-2xl font-bold leading-tight">{user.name}</h2>
+                      <div className="mt-1 text-sm text-muted-foreground">{user.role}</div>
+                    </>
+                  )}
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     <Pill tone="yellow">Lv.3</Pill>
                     <Pill>streak {user.streak} วัน</Pill>
@@ -106,6 +145,7 @@ function Profile() {
                     <button
                       onClick={() => {
                         setDraft(bio);
+                        setDraftUser({ name: user.name, role: user.role });
                         setEditing(true);
                       }}
                       className="text-xs font-semibold underline underline-offset-2"
@@ -194,6 +234,60 @@ function Profile() {
                 <div className="h-full bg-ink" style={{ width: `${user.goalProgress}%` }} />
               </div>
               <div className="mt-1 text-xs font-mono">{user.goalProgress}% ของเส้นทาง</div>
+            </div>
+          </Card>
+
+          <Card>
+            <div className="p-6">
+              <h3 className="font-display text-xl font-bold">การตั้งค่า Google Sheets</h3>
+              <p className="mt-2 text-sm text-muted-foreground">แบ็คอัปข้อมูล WorkLog ของคุณไปยัง Google Sheets อัตโนมัติ</p>
+              
+              <div className="mt-4 space-y-3">
+                <div>
+                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Webhook URL</label>
+                  <input
+                    type="url"
+                    value={sheetUrl}
+                    onChange={(e) => {
+                      setSheetUrlState(e.target.value);
+                      setSheetUrl(e.target.value);
+                    }}
+                    placeholder="https://script.google.com/macros/s/..."
+                    className="w-full rounded-md border-2 border-ink bg-cream px-3 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-yellow"
+                  />
+                </div>
+                
+                <button
+                  onClick={() => setShowSetup(!showSetup)}
+                  className="text-sm font-semibold underline underline-offset-2"
+                >
+                  {showSetup ? "ซ่อนวิธีตั้งค่า" : "ดูวิธีตั้งค่า (3 นาที)"}
+                </button>
+                
+                {showSetup && (
+                  <div className="rounded-md bg-yellow/20 p-3 text-sm">
+                    <ol className="list-inside list-decimal space-y-2">
+                      <li>สร้าง Google Sheet ใหม่ตั้งชื่อตามต้องการ</li>
+                      <li>ไปที่เมนู <strong>ส่วนขยาย (Extensions)</strong> {'>'} <strong>Apps Script</strong></li>
+                      <li>ก็อปปี้โค้ดด้านล่างนี้ไปวางแทนที่โค้ดเดิมทั้งหมด:
+                        <pre className="mt-2 overflow-x-auto rounded border-2 border-ink bg-cream p-2 text-xs font-mono">
+{`function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var payload = JSON.parse(e.postData.contents);
+  sheet.appendRow([new Date(), payload.type, JSON.stringify(payload.data)]);
+  return ContentService.createTextOutput(JSON.stringify({status: "success"}))
+    .setMimeType(ContentService.MimeType.JSON);
+}`}
+                        </pre>
+                      </li>
+                      <li>กดปุ่ม <strong>ทำให้ใช้งานได้ (Deploy)</strong> {'>'} <strong>การทำให้ใช้งานได้รายการใหม่</strong></li>
+                      <li>เลือกประเภท <strong>เว็บแอป (Web App)</strong></li>
+                      <li>สิทธิ์เข้าถึง: เลือก <strong>ทุกคน (Anyone)</strong> และกด Deploy</li>
+                      <li>นำ URL ที่ได้มาใส่ในช่อง Webhook URL ด้านบนนี้</li>
+                    </ol>
+                  </div>
+                )}
+              </div>
             </div>
           </Card>
         </div>

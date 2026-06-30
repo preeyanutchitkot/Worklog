@@ -15,7 +15,12 @@ const calendarStorageKey = "worklog-calendar";
 function CalendarPage() {
   const [calendar, setCalendar] = useState(() => {
     const saved = window.localStorage.getItem(calendarStorageKey);
-    if (saved) return JSON.parse(saved);
+    if (saved && saved !== "undefined") {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {}
+    }
     // Create current week by default
     const curr = new Date();
     const first = curr.getDate() - curr.getDay() + (curr.getDay() === 0 ? -6 : 1);

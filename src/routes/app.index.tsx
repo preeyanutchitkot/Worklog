@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AppShell, Card, Pill } from "@/components/AppShell";
 import { insights, todayTasks, user as seedUser, workLogs } from "@/lib/mock";
-import { getSheetUrl, setSheetUrl } from "@/lib/api";
+import { getSheetUrl, setSheetUrl, useUser } from "@/lib/api";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({ meta: [{ title: "แดชบอร์ด · WorkLog" }] }),
@@ -17,17 +17,26 @@ const logsStorageKey = "worklog-logs";
 const tasksStorageKey = "worklog-tasks";
 
 function Home() {
-  const [profile, setProfile] = useState(() => {
-    const saved = window.localStorage.getItem(profileStorageKey);
-    return saved ? JSON.parse(saved) : seedUser;
-  });
+  const profile = useUser();
   const [tasks, setTasks] = useState(() => {
     const saved = window.localStorage.getItem(tasksStorageKey);
-    return saved ? JSON.parse(saved) : todayTasks;
+    if (saved && saved !== "undefined") {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {}
+    }
+    return todayTasks;
   });
   const [logs, setLogs] = useState<WorkLog[]>(() => {
     const saved = window.localStorage.getItem(logsStorageKey);
-    return saved ? JSON.parse(saved) : workLogs;
+    if (saved && saved !== "undefined") {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {}
+    }
+    return workLogs;
   });
   const [editingLogId, setEditingLogId] = useState<number | null>(null);
   const [form, setForm] = useState({
@@ -40,9 +49,7 @@ function Home() {
   });
   const [sheetUrlInput, setSheetUrlInput] = useState(getSheetUrl());
 
-  useEffect(() => {
-    window.localStorage.setItem(profileStorageKey, JSON.stringify(profile));
-  }, [profile]);
+
 
   useEffect(() => {
     window.localStorage.setItem(logsStorageKey, JSON.stringify(logs));

@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { goals as seedGoals, todayTasks } from "@/lib/mock";
 import type { ReactNode } from "react";
-import { ClipboardList, LayoutDashboard, Search, Target, CalendarDays, BarChart3 } from "lucide-react";
+import { ClipboardList, LayoutDashboard, Search, Target, CalendarDays, BarChart3, User } from "lucide-react";
 import { Mascot } from "./Mascot";
 import { user as mockUser } from "@/lib/mock";
 import { fetchUser, useUser } from "@/lib/api";
@@ -14,6 +14,7 @@ const nav = [
   { to: "/app/goals", label: "งานและเป้าหมาย", icon: Target },
   { to: "/app/calendar", label: "ตารางงาน", icon: CalendarDays },
   { to: "/app/growth", label: "สรุปผลงาน", icon: BarChart3 },
+  { to: "/app/profile", label: "โปรไฟล์", icon: User },
 ];
 
 export function AppShell({ children, title, subtitle }: { children: ReactNode; title: string; subtitle?: string }) {
@@ -63,11 +64,11 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
             })}
           </nav>
 
-          <div className="border-t-2 border-sidebar-border px-6 py-4">
+          <Link to="/app/profile" className="border-t-2 border-sidebar-border px-6 py-4 block hover:bg-sidebar-accent transition-colors">
             <div className="text-xs text-sidebar-foreground/60">ผู้ใช้งาน</div>
             <div className="mt-0.5 text-sm font-semibold">{user.name}</div>
             <div className="text-xs text-sidebar-foreground/60">{user.role}</div>
-          </div>
+          </Link>
         </aside>
 
         <main className="min-w-0 flex-1">

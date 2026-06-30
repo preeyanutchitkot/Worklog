@@ -41,17 +41,35 @@ export async function fetchUser() {
 }
 
 export function useUser() {
-  const [user, setUser] = useState(mockUser);
+  const [user, setUser] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = window.localStorage.getItem("worklog-profile");
+        if (saved && saved !== "undefined") {
+          return { ...mockUser, ...JSON.parse(saved) };
+        }
+      } catch (e) {
+        console.error("Failed to parse user profile from local storage", e);
+      }
+    }
+    return mockUser;
+  });
 
   useEffect(() => {
-    fetchUser().then((data) => {
-      if (data) {
-        setUser({ ...mockUser, ...data });
-      }
-    });
+    // Listen for custom event to update user globally
+    const handleUpdate = (e: any) => setUser(e.detail);
+    window.addEventListener("update-profile", handleUpdate);
+    return () => window.removeEventListener("update-profile", handleUpdate);
   }, []);
 
   return user;
+}
+
+export function updateUser(newUser: any) {
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem("worklog-profile", JSON.stringify(newUser));
+    window.dispatchEvent(new CustomEvent("update-profile", { detail: newUser }));
+  }
 }
 
 export async function saveToGoogleSheets(data: any) {
